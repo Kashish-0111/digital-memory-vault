@@ -7,7 +7,12 @@ import Modal from '../components/common/Modal.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 
 export default function RemindersPage() {
-  const { reminders, categories, settings } = useApp();
+  const {
+    reminders, categories, settings,
+    addReminderFirestore, updateReminderFirestore, deleteReminderFirestore,
+    firebaseUser,
+  } = useApp();
+
   const { state: reminderState, dispatch } = reminders;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,19 +38,33 @@ export default function RemindersPage() {
     return filtered;
   }, [reminderState.reminders, reminderState.filterType, reminderState.searchQuery]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (editingReminder) {
       dispatch({ type: reminderActions.UPDATE_REMINDER, payload: { id: editingReminder.id, data: formData } });
+      if (firebaseUser) {
+        await updateReminderFirestore(editingReminder.id, formData);
+      }
     } else {
-      dispatch({ type: reminderActions.ADD_REMINDER, payload: formData });
+      if (firebaseUser) {
+        const firestoreId = await addReminderFirestore(formData);
+        dispatch({
+          type: reminderActions.ADD_REMINDER,
+          payload: { ...formData, firestoreId },
+        });
+      } else {
+        dispatch({ type: reminderActions.ADD_REMINDER, payload: formData });
+      }
     }
     closeModal();
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this reminder?')) {
       dispatch({ type: reminderActions.DELETE_REMINDER, payload: id });
+      if (firebaseUser) {
+        await deleteReminderFirestore(id);
+      }
     }
   };
 
@@ -98,14 +117,16 @@ export default function RemindersPage() {
   return (
     <div className="page-container">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Reminders</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Reminders</h1>
+          {firebaseUser && (
+            <p className="text-xs text-green-500 mt-1">● Cloud Synced</p>
+          )}
+        </div>
         <div className="flex gap-2">
-          <button onClick={handleExportCSV} className="btn-secondary text-sm">
-            Export CSV
-          </button>
+          <button onClick={handleExportCSV} className="btn-secondary text-sm">Export CSV</button>
           <button onClick={() => openModal()} className="btn-primary flex items-center gap-2 text-sm">
-            <Plus className="w-4 h-4" />
-            Add Reminder
+            <Plus className="w-4 h-4" /> Add Reminder
           </button>
         </div>
       </div>
@@ -121,18 +142,16 @@ export default function RemindersPage() {
             className="input-field pl-10"
           />
         </div>
-        <div className="flex gap-2">
-          <select
-            value={reminderState.filterType}
-            onChange={(e) => dispatch({ type: reminderActions.SET_FILTER_TYPE, payload: e.target.value })}
-            className="input-field w-40"
-          >
-            <option value="All">All Types</option>
-            {reminderTypes.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-        </div>
+        <select
+          value={reminderState.filterType}
+          onChange={(e) => dispatch({ type: reminderActions.SET_FILTER_TYPE, payload: e.target.value })}
+          className="input-field w-40"
+        >
+          <option value="All">All Types</option>
+          {reminderTypes.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
       </div>
 
       {filteredReminders.length === 0 ? (
@@ -141,9 +160,7 @@ export default function RemindersPage() {
           title="No reminders yet"
           description="Add birthdays, anniversaries, bill due dates, and more."
           action={
-            <button onClick={() => openModal()} className="btn-primary">
-              Add First Reminder
-            </button>
+            <button onClick={() => openModal()} className="btn-primary">Add First Reminder</button>
           }
         />
       ) : (
@@ -155,44 +172,30 @@ export default function RemindersPage() {
             const isUpcoming = daysUntil !== null && daysUntil > 0 && daysUntil <= 7;
 
             return (
-              <div
-                key={reminder.id}
-                className="glass-card p-5 group hover:scale-[1.01] transition-all"
-              >
+              <div key={reminder.id} className="glass-card p-5 group hover:scale-[1.01] transition-all">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-semibold text-gray-900 dark:text-white truncate">
-                        {reminder.title}
-                      </h3>
-                      {reminder.repeatYearly && (
-                        <Repeat className="w-3.5 h-3.5 text-primary-500" />
-                      )}
+                      <h3 className="font-semibold text-gray-900 dark:text-white truncate">{reminder.title}</h3>
+                      {reminder.repeatYearly && <Repeat className="w-3.5 h-3.5 text-primary-500" />}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {formatDate(reminder.date)}
+                        <Calendar className="w-3.5 h-3.5" /> {formatDate(reminder.date)}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Bell className="w-3.5 h-3.5" />
-                        {getDaysLabel(reminder.reminderDays)}
+                        <Bell className="w-3.5 h-3.5" /> {getDaysLabel(reminder.reminderDays)}
                       </span>
                     </div>
                     {daysUntil !== null && (
                       <div className="mt-2">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            isToday
-                              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                              : isUpcoming
-                              ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
-                              : isPast
-                              ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                              : 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300'
-                          }`}
-                        >
-                          {isToday ? 'Today' : isPast ? 'Overdue' : isUpcoming ? `${daysUntil} days left` : `${daysUntil} days left`}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          isToday ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                          : isUpcoming ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
+                          : isPast ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                          : 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300'
+                        }`}>
+                          {isToday ? 'Today' : isPast ? 'Overdue' : `${daysUntil} days left`}
                         </span>
                       </div>
                     )}
@@ -285,4 +288,3 @@ export default function RemindersPage() {
     </div>
   );
 }
-

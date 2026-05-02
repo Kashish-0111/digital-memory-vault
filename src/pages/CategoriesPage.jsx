@@ -50,9 +50,7 @@ export default function CategoriesPage() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm('Delete this category?')) {
-      deleteCategory(id);
-    }
+    if (window.confirm('Delete this category?')) deleteCategory(id);
   };
 
   return (
@@ -63,8 +61,7 @@ export default function CategoriesPage() {
           <p className="text-gray-500 dark:text-gray-400 mt-1">{categories.length} categories</p>
         </div>
         <button onClick={openAdd} className="btn-primary flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          New Category
+          <Plus className="w-4 h-4" /> New Category
         </button>
       </div>
 
@@ -73,34 +70,49 @@ export default function CategoriesPage() {
           icon={<Tag className="w-16 h-16 text-gray-300 dark:text-gray-600" />}
           title="No categories yet"
           description="Create categories to organize your notes."
-          action={<button onClick={openAdd} className="btn-primary flex items-center gap-2 mx-auto"><Plus className="w-4 h-4" />Add Category</button>}
+          action={
+            <button onClick={openAdd} className="btn-primary flex items-center gap-2 mx-auto">
+              <Plus className="w-4 h-4" /> Add Category
+            </button>
+          }
         />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {categories.map((cat) => (
-            <GlassCard key={cat.id} className="p-5 flex items-center justify-between group">
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-md"
-                  style={{ backgroundColor: cat.color + '22', border: `2px solid ${cat.color}44` }}
-                >
-                  {cat.icon}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{cat.name}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                    <span className="text-xs text-gray-400 font-mono">{cat.color}</span>
+            <GlassCard key={cat.id} className="p-4">
+              <div className="flex items-center justify-between">
+                {/* Left: icon + text */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+                    style={{ backgroundColor: cat.color + '22', border: `2px solid ${cat.color}44` }}
+                  >
+                    {cat.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 dark:text-white truncate">{cat.name}</p>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: cat.color }} />
+                      <span className="text-xs text-gray-400 font-mono">{cat.color}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openEdit(cat)} className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 transition-colors">
-                  <Pencil className="w-4 h-4" />
-                </button>
-                <button onClick={() => handleDelete(cat.id)} className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-colors">
-                  <Trash2 className="w-4 h-4" />
-                </button>
+
+                {/* Right: action buttons */}
+                <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                  <button
+                    onClick={() => openEdit(cat)}
+                    className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 transition-colors"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(cat.id)}
+                    className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </GlassCard>
           ))}
@@ -127,7 +139,9 @@ export default function CategoriesPage() {
               {EMOJI_OPTIONS.map((em) => (
                 <button type="button" key={em} onClick={() => setForm({ ...form, icon: em })}
                   className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${
-                    form.icon === em ? 'ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/30 scale-110' : 'bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700'
+                    form.icon === em
+                      ? 'ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/30 scale-110'
+                      : 'bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700'
                   }`}
                 >{em}</button>
               ))}
@@ -139,7 +153,9 @@ export default function CategoriesPage() {
             <div className="flex flex-wrap gap-2">
               {COLOR_OPTIONS.map((c) => (
                 <button type="button" key={c} onClick={() => setForm({ ...form, color: c })}
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${form.color === c ? 'border-gray-900 dark:border-white scale-110' : 'border-transparent'}`}
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                    form.color === c ? 'border-gray-900 dark:border-white scale-110' : 'border-transparent'
+                  }`}
                   style={{ backgroundColor: c }}
                 />
               ))}
@@ -147,7 +163,12 @@ export default function CategoriesPage() {
           </div>
 
           <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ backgroundColor: form.color + '22' }}>{form.icon}</div>
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+              style={{ backgroundColor: form.color + '22' }}
+            >
+              {form.icon}
+            </div>
             <span className="font-medium text-gray-900 dark:text-white">{form.name || 'Preview'}</span>
           </div>
 
