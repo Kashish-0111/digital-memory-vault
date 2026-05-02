@@ -1,67 +1,17 @@
 # 🔐 Digital Memory Vault
 
-A secure personal memory management app with smart notifications.
+A secure, offline-first personal memory management app built with React + Firebase.
+
+![Digital Memory Vault](https://digital-memory-vault.web.app)
+
+## 🌐 Live Demo
+
+👉 **[https://digital-memory-vault.web.app](https://digital-memory-vault.web.app)**
 
 ---
 
-## ⚡ Quick Start
 
-### Prerequisites
-- **Node.js v18+** — [Download](https://nodejs.org/)
-- **npm** (comes with Node.js)
 
-### 1. Install & Run Locally
-
-```bash
-# Step 1: Extract the ZIP
-unzip digital-memory-vault.zip
-cd digital-memory-vault
-
-# Step 2: Install dependencies
-npm install
-
-# Step 3: Start development server
-npm run dev
-```
-
-Open **http://localhost:5173** in your browser.
-
-> **First time?** You'll be asked to create a 4-digit PIN. Remember it — it locks your vault!
-
----
-
-## 🌐 Deploy to Netlify (Free)
-
-### Option A: Drag & Drop (Easiest)
-
-```bash
-# Build the project
-npm run build
-```
-
-1. Go to [netlify.com](https://netlify.com) → Sign up free
-2. Click **"Add new site"** → **"Deploy manually"**
-3. Drag & drop the **`dist/`** folder
-4. Done! Your app is live ✅
-
-### Option B: GitHub + Netlify (Auto-deploy)
-
-1. Push code to GitHub
-2. Go to Netlify → **"Add new site"** → **"Import from Git"**
-3. Set build settings:
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist`
-4. Click **Deploy**
-
----
-
-## 🔑 Default PIN
-
-No default PIN — you set your own on first launch.
-
-To reset PIN: Go to **Settings → Change PIN**
-
----
 
 ## 📁 Project Structure
 
@@ -82,23 +32,120 @@ src/
 
 ## ✨ Features
 
-- 🔐 PIN-based local authentication
-- 📝 Notes with categories, tags, pin & private
-- 🔔 Smart reminders with browser notifications
-- 🎂 Birthday & anniversary tracking
-- 💳 Bill due date reminders
-- 🌙 Dark / Light mode
-- 📤 Export / Import data as JSON
-- 🎉 Confetti on birthdays
-- 📱 Fully responsive (mobile + tablet + desktop)
+- 🔐 **PIN Protection** — Secure local PIN-based authentication
+- 📧 **Firebase Auth** — Email/Password cloud login
+- 📝 **Smart Notes** — Rich notes with categories, tags, pin & privacy toggle
+- 🔔 **Reminders** — Birthdays, bills, anniversaries with yearly repeat
+- 🗂️ **Categories** — Custom categories with emoji icons and color coding
+- ☁️ **Cloud Sync** — Firestore real-time sync for Firebase users
+- 🌙 **Dark/Light Mode** — Theme toggle on every page
+- 🎙️ **Voice Input** — Voice-to-text for note descriptions
+- 📤 **Export CSV** — Download reminders as CSV
+- 💾 **Local First** — Works offline with localStorage fallback
+- ⚡ **Lightning Fast** — No server latency, instant everything
 
 ---
 
 ## 🛠 Tech Stack
 
-- React 19 + Vite
-- Tailwind CSS v4
-- React Router v7
-- Context API + useReducer
-- Browser Notification API
-- LocalStorage (no backend needed)
+| Technology | Usage |
+|---|---|
+| React 18 | Frontend UI |
+| Vite | Build tool |
+| Tailwind CSS | Styling |
+| Firebase Auth | Authentication |
+| Cloud Firestore | Database |
+| Firebase Hosting | Deployment |
+| React Router v6 | Navigation |
+| Lucide React | Icons |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Firebase account
+  ### Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/YOUR_USERNAME/digital-memory-vault.git
+
+# Go into the project
+cd digital-memory-vault
+
+# Install dependencies
+npm install
+```
+
+### Environment Setup
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+### Run Locally
+
+```bash
+npm run dev
+```
+
+### Build & Deploy
+
+```bash
+# Build
+npm run build
+
+# Deploy to Firebase
+firebase deploy
+```
+---
+
+## 🔒 Security
+
+- PIN is hashed and stored locally
+- Firebase API keys stored in `.env` (never committed)
+- Firestore rules restrict data access per user
+- No sensitive data exposed in repository
+
+---
+
+## 📱 PWA Ready
+
+The app is fully responsive and works on:
+- 💻 Desktop
+- 📱 Mobile
+- 📟 Tablet
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo
+2. Create your branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License — feel free to use and modify.
+
+---
+
+## 👨‍💻 Author
+
+**Kashish Dhankar**
+
+Made with ❤️ and lots of ☕
