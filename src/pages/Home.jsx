@@ -12,8 +12,9 @@ import {
   FileText,
   Star,
   Zap,
+  Sun,Moon
 } from 'lucide-react';
-// import { useApp } from '../context/AppContext.jsx';
+ import { useApp } from '../context/AppContext.jsx';
 
 function Particle({ style }) {
   return (
@@ -105,27 +106,51 @@ export default function HomePage() {
     { width: 40, height: 40, top: '45%', left: '15%', animationDelay: '1.5s' },
   ];
 
+  const { settings } = useApp();
+  const isDark = settings.state.theme === 'dark';
+
+const toggleTheme = () => {
+  settings.dispatch({
+    type: 'SET_SETTINGS',
+    payload: { ...settings.state, theme: isDark ? 'light' : 'dark' }
+  });
+};
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 overflow-x-hidden">
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10 dark:border-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-600/30">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-gray-900 dark:text-white text-lg">Memory Vault</span>
-          </div>
-          <button
-            onClick={handleGetStarted}
-            className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-primary-600/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Get Started
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      </nav>
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10 dark:border-slate-800/50">
+  <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    {/* Logo */}
+    <div className="flex items-center gap-3">
+      <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-600/30">
+        <Shield className="w-5 h-5 text-white" />
+      </div>
+      <span className="font-bold text-gray-900 dark:text-white text-lg">Memory Vault</span>
+    </div>
+
+    {/* Right side buttons */}
+    <div className="flex items-center gap-3">
+      {/* Theme toggle */}
+      <button
+        onClick={toggleTheme}
+        className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200"
+      >
+        {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      </button>
+
+      {/* Get Started */}
+      <button
+        onClick={handleGetStarted}
+        className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-primary-600/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+      >
+        Get Started
+        <ArrowRight className="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+</nav>
 
       {/* HERO */}
       <section
