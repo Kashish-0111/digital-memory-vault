@@ -20,9 +20,7 @@ export const notesActions = {
   SET_SORT: 'SET_SORT',
 };
 
-const saveNotes = (notes) => {
-  storage.set('NOTES', notes);
-};
+const saveNotes = (notes) => storage.set('NOTES', notes);
 
 export const notesReducer = (state, action) => {
   switch (action.type) {
@@ -31,13 +29,14 @@ export const notesReducer = (state, action) => {
 
     case notesActions.ADD_NOTE: {
       const newNote = {
-        id: generateId(),
+        id: action.payload.firestoreId || generateId(),
         ...action.payload,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         isPinned: false,
         isPrivate: false,
       };
+      delete newNote.firestoreId;
       const updated = [newNote, ...state.notes];
       saveNotes(updated);
       return { ...state, notes: updated };
@@ -88,4 +87,3 @@ export const notesReducer = (state, action) => {
       return state;
   }
 };
-

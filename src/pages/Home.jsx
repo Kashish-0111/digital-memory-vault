@@ -13,7 +13,7 @@ import {
   Star,
   Zap,
 } from 'lucide-react';
-import { useApp } from '../context/AppContext.jsx';
+// import { useApp } from '../context/AppContext.jsx';
 
 function Particle({ style }) {
   return (
@@ -77,15 +77,15 @@ const steps = [
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { auth } = useApp();
+  // const { auth } = useApp();
   const heroRef = useRef(null);
   const [scrollY, setScrollY] = useState(0);
 
-  useEffect(() => {
-    if (auth.state.isAuthenticated) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [auth.state.isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   if (auth.state.isAuthenticated) {
+  //     navigate('/dashboard', { replace: true });
+  //   }
+  // }, [auth.state.isAuthenticated, navigate]);
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
